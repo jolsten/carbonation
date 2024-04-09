@@ -1,0 +1,96 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "carbonation"
+dynamic = ["version"]
+description = "You can't have fizz without carbonation"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Jonathan Olsten", email = "jonathan.olsten@gmail.com" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "typeconvert==0.2",
+  "numpy<1.26,>=1.19 ",
+  "numba>=0.57",
+  "pyarrow>=7.0.0",
+  "pydantic>=2.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/unknown/carbonation#readme"
+Issues = "https://github.com/unknown/carbonation/issues"
+Source = "https://github.com/unknown/carbonation"
+
+[tool.hatch.version]
+source = "vcs"
+
+[template.plugins.default]
+src-layout = true
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/carbonation/_version.py"
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+  "hypothesis",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = [
+  "- coverage combine",
+  "coverage report",
+]
+cov = [
+  "test-cov",
+  "cov-report",
+]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+[tool.hatch.envs.types]
+dependencies = [
+  "mypy>=1.0.0",
+]
+
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/carbonation tests}"
+
+[tool.coverage.run]
+source_pkgs = ["carbonation*", "tests*"]
+branch = true
+parallel = true
+omit = [
+  "src/carbonation/_version.py",
+]
+
+[tool.coverage.paths]
+carbonation = ["src/carbonation", "*/carbonation/src/carbonation"]
+tests = ["tests", "*/carbonation/tests"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]
