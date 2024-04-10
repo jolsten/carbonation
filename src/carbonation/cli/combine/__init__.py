@@ -1,12 +1,17 @@
 import argparse
-import datetime
 import fileinput
+import re
 from itertools import zip_longest
-from typing import Iterable, List, Literal, Tuple
+from typing import Iterable, List
 
 import numpy as np
-from dateutil.parser import parse as parse_datetime
+import pyarrow as pa
 
+from carbonation.cli.utils import (
+    make_passthru_parser,
+    parse_data_to_ndarray,
+    parse_data_to_pa_table,
+)
 from carbonation.measurand import Measurand, make_measurand
 
 
@@ -17,13 +22,7 @@ def grouper(iterable: Iterable, n: int):
     return zip_longest(*args, fillvalue=None)
 
 
-def parse_line(
-    line: str, dtype: Literal["u1", "u2", "u4", "u8"]
-) -> Tuple[datetime.datetime, np.ndarray]:
-    time, *values = line.strip().split()
-    time = parse_datetime(time)
-    values = np.array([int(x) for x in values], dtype=dtype)
-    return time, values
+RE_INT = re.compile(r"^\d+$")
 
 
 def main() -> None:
@@ -32,19 +31,47 @@ def main() -> None:
     parser.add_argument(
         "-c", "--chunk-size", type=int, default=1000, help="processing chunk size"
     )
+    parser.add_argument(
+        "--passthru",
+        "-p",
+        type=int,
+        default=1,
+        help="number of columns to pass thru to output",
+    )
     parser.add_argument("measurand", type=str, nargs="+", help="measurand definition")
     args = parser.parse_args()
 
     measurands: List[Measurand] = []
     for spec in args.measurand:
-        spec = spec.replace(";", ";")
-        measurands.append(make_measurand(spec))
+        if RE_INT.match(spec):
+            measurands.append(int(spec))
+        else:
+            if ";" not in spec:
+                spec = spec.replace("/", ";")
+            measurands.append(make_measurand(spec))
 
-    window = []
+    line_parser = make_passthru_parser(args.passthru)
+
+    # window = []
     for line in fileinput.input("-"):
-        time, data = parse_line(line, dtype="u1")
-        print(time, end=" ")
+        passthru, rest = line_parser(line)
+        rest = rest.strip().split()
+        print(passthru, end=" ")
+
+        data = parse_data_to_ndarray([rest], dtype="u1")
+
+        # data = parse_data_to_pa_table(rest, pa.uint8())
+        # print(data)
+        # data = pa.Table.from_arrays([data], names=[str(i) for i in range(len(data))])
+        # data = np.array([int(x) for x in rest], dtype="u1")
+        # data = pa.array([int(x) for x in rest], pa.uint8())
 
         for m in measurands:
-            value = m.build(data)[0]
+            if isinstance(m, int):
+                value = rest[m - 1]
+            elif isinstance(m, Measurand):
+                value = m.build(data)[0]
+            else:
+                raise TypeError
             print(value, end=" ")
+        print()
