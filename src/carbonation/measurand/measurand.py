@@ -36,7 +36,6 @@ class Measurand(BaseModel):
         tmp = self.parameter._build_ndarray(data)
 
         if self.interp:
-            print("interp ndarray")
             tmp = self.interp.apply_ndarray(tmp, self.parameter.size)
 
         if self.euc:
@@ -48,7 +47,6 @@ class Measurand(BaseModel):
         tmp = self.parameter._build_paarray(data)
 
         if self.interp:
-            print("interp paarray")
             tmp = self.interp.apply_paarray(tmp, self.parameter.size)
 
         if self.euc:
@@ -62,7 +60,6 @@ def make_measurand(spec: str, word_size: int = 8, one_based: bool = True) -> Mea
     parameter = make_parameter(parts[0], word_size=word_size, one_based=one_based)
     mapping = {"parameter": parameter}
 
-    print(parts)
     if len(parts) >= 2:
         mapping["interp"] = make_interp(parts[1])
 
