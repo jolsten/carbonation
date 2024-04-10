@@ -23,6 +23,7 @@ def grouper(iterable: Iterable, n: int):
 
 
 RE_INT = re.compile(r"^\d+$")
+RE_RANGE = re.compile(r"^\d+-\d*$")
 
 
 def main() -> None:
@@ -44,12 +45,26 @@ def main() -> None:
     measurands: List[Measurand] = []
     for spec in args.measurand:
         if RE_INT.match(spec):
-            measurands.append(int(spec))
+            a = int(spec) - 1
+            measurands.append(slice(a, a + 1))
+        elif RE_RANGE.match(spec):
+            a, b = spec.split("-")
+            a = int(a) - 1
+            if b == "":
+                measurands.append(slice(a), None)
+                continue
+
+            b = int(b) - 1
+            if a <= b:
+                measurands.append(slice(a, b + 1))
+            elif a > b:
+                measurands.append(slice(a, b - 1, -1))
         else:
             if ";" not in spec:
                 spec = spec.replace("/", ";")
             measurands.append(make_measurand(spec))
 
+    print(measurands)
     line_parser = make_passthru_parser(args.passthru)
 
     # window = []
@@ -67,11 +82,13 @@ def main() -> None:
         # data = pa.array([int(x) for x in rest], pa.uint8())
 
         for m in measurands:
-            if isinstance(m, int):
-                value = rest[m - 1]
+            if isinstance(m, (int, slice)):
+                for value in rest[m]:
+                    print(value, end=" ")
             elif isinstance(m, Measurand):
                 value = m.build(data)[0]
+                print(value, end=" ")
             else:
                 raise TypeError
-            print(value, end=" ")
+            # print(value, end=" ")
         print()
