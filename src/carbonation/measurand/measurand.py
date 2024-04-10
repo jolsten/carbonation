@@ -30,7 +30,8 @@ class Measurand(BaseModel):
             return self._build_ndarray(data)
         if isinstance(data, pa.Table):
             return self._build_paarray(data)
-        raise TypeError
+        msg = f"data must be np.ndarray or pa.Table, but is {type(data)}"
+        raise TypeError(msg)
 
     def _build_ndarray(self, data: np.ndarray) -> np.ndarray:
         tmp = self.parameter._build_ndarray(data)
