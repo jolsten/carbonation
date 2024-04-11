@@ -37,6 +37,7 @@ cli = ["python-dateutil"]
 
 [project.scripts]
 meas = "carbonation.cli.measurand:main"
+reframe = "carbonation.cli.reframe:main"
 
 [project.urls]
 Documentation = "https://github.com/jolsten/carbonation#readme"
