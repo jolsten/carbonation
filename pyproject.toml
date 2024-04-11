@@ -36,7 +36,7 @@ dependencies = [
 cli = ["python-dateutil"]
 
 [project.scripts]
-combine = "carbonation.cli.combine:main"
+meas = "carbonation.cli.measurand:main"
 
 [project.urls]
 Documentation = "https://github.com/jolsten/carbonation#readme"
