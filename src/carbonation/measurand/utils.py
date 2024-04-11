@@ -7,7 +7,7 @@ import pyarrow.compute as pac
 from numpy.typing import DTypeLike
 
 
-def _size_to_uint(size: int) -> DTypeLike:
+def size_to_uint(size: int) -> DTypeLike:
     if size <= 8:
         return "uint8"
     elif size <= 16:
@@ -77,7 +77,7 @@ ONE = np.uint8(1)
 
 
 def _reverse_bits_paarray(arr: pa.Array, size: int) -> pa.Array:
-    dtype = _size_to_uint(size)
+    dtype = size_to_uint(size)
     if isinstance(arr, pa.ChunkedArray):
         result = pa.chunked_array(
             [np.zeros(len(chunk), dtype=dtype) for chunk in arr.chunks]

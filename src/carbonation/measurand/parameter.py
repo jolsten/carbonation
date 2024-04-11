@@ -7,7 +7,7 @@ import pyarrow.compute as pac
 from pydantic import BaseModel, Field
 
 from carbonation.measurand.component import Component, make_component
-from carbonation.measurand.utils import _expand_component_range, _size_to_uint
+from carbonation.measurand.utils import _expand_component_range, size_to_uint
 
 DataArray = Union[np.ndarray, pa.Table]
 
@@ -31,7 +31,7 @@ class Parameter(BaseModel):
 
     @cached_property
     def output_dtype(self) -> str:
-        return _size_to_uint(self.size)
+        return size_to_uint(self.size)
 
     @classmethod
     def from_spec(cls, spec: str, word_size=word_size) -> "Parameter":
@@ -46,7 +46,7 @@ class Parameter(BaseModel):
 
     def _build_ndarray(self, data: np.ndarray) -> np.ndarray:
         tmp = np.atleast_2d(data)
-        dtype = _size_to_uint(self.size)
+        dtype = size_to_uint(self.size)
         result = np.zeros(tmp.shape[0], dtype=dtype)
         size = 0
         for comp in reversed(self.components):

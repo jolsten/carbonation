@@ -12,7 +12,7 @@ from carbonation.measurand.utils import (
     _range_to_tuple,
     _reverse_bits_ndarray,
     _reverse_bits_paarray,
-    _size_to_uint,
+    size_to_uint,
 )
 
 _RE_COMPONENT = re.compile(
@@ -82,7 +82,7 @@ class Component(BaseModel):
 
     @cached_property
     def input_dtype(self) -> np.dtype:
-        return _size_to_uint(self.word_size)
+        return size_to_uint(self.word_size)
 
     def __eq__(self, other: "Component") -> bool:
         return all(
