@@ -57,7 +57,7 @@ def format_float(value: np.floating) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="combine")
+    parser = argparse.ArgumentParser(prog="meas")
     parser.add_argument("-b", "--bits", type=int, default=8, help="input bits per word")
     parser.add_argument(
         "-w", "--width", type=int, default=None, help="width of column-spec columns"
