@@ -5,12 +5,10 @@ from itertools import zip_longest
 from typing import Iterable, List
 
 import numpy as np
-import pyarrow as pa
 
 from carbonation.cli.utils import (
     make_passthru_parser,
     parse_data_to_ndarray,
-    parse_data_to_pa_table,
 )
 from carbonation.measurand import Measurand, make_measurand
 from carbonation.measurand.utils import size_to_uint
