@@ -1,13 +1,12 @@
 import numpy as np
 import pyarrow as pa
-
-from carbonation.measurand.utils import _size_to_uint
+from carbonation.measurand.utils import size_to_uint
 
 ARRAY_SIZE = 100
 
 
 def _make_sample_data(word_size: int) -> np.ndarray:
-    dtype = _size_to_uint(word_size)
+    dtype = size_to_uint(word_size)
     stop = 2**word_size + 1
     one = np.arange(start=1, stop=stop, dtype=np.uint16)
     one = np.fmod(one, np.uint16(2**word_size))

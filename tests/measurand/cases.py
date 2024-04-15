@@ -55,6 +55,8 @@ measurand_test_cases = (
     [
         Example("1;2c", result=1, word_size=8, size=8),
         Example("255;2c", result=-1, word_size=8, size=8),
+        Example("1-4;u", 0x01020304, word_size=8, size=32),
+        Example("1-3;u", 0b0000000001_0000000010_0000000011, word_size=10, size=30),
         # MIL-STD-1750A32
         Example("127+255+255+127;1750a32", result=0.9999998 * 2**127),
         # (0x7FFFFF7F, 0.9999998 * 2**127),

@@ -38,16 +38,22 @@ def _expand_list(list_spec: str) -> List[int]:
         return list([int(list_spec)])
 
 
-_RE_RAWPARAM_RANGE = re.compile(r"^(?P<range>\d+-\d+)(?P<rest>.*)$", re.IGNORECASE)
+_RE_RAWPARAM_RANGE = re.compile(
+    r"^(?P<range>\d+-\d+)(?P<bits>[^;]*)(?P<etc>.*)$", re.IGNORECASE
+)
 
 
 def _expand_component_range(spec: str) -> str:
     component_range = _RE_RAWPARAM_RANGE.match(spec)
     if component_range:
         word_range = component_range.group("range")
-        additional = component_range.group("rest")
+        additional = component_range.group("bits")
+        etc = component_range.group("etc")
+        print(word_range, additional, etc)
+        print(f"range = {word_range!r}, add = {additional!r}, etc = {etc!r}")
         words = _expand_list(word_range)
         spec = "+".join([f"{word}{additional}" for word in words])
+        spec = f"{spec}{etc}"
     return spec
 
 

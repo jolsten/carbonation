@@ -1,9 +1,6 @@
 import numpy as np
 import pyarrow as pa
 import pytest
-from hypothesis import assume, given
-from hypothesis import strategies as st
-
 from carbonation.measurand.utils import (
     _bit_range_to_mask_and_shift,
     _expand_component_range,
@@ -11,8 +8,10 @@ from carbonation.measurand.utils import (
     _range_to_tuple,
     _reverse_bits_ndarray,
     _reverse_bits_paarray,
-    _size_to_uint,
+    size_to_uint,
 )
+from hypothesis import assume, given
+from hypothesis import strategies as st
 
 from .conftest import ARRAY_SIZE
 
@@ -22,6 +21,8 @@ from .conftest import ARRAY_SIZE
     [
         ("1-4", "1+2+3+4"),
         ("4-1", "4+3+2+1"),
+        ("1-4;u", "1+2+3+4;u"),
+        ("1-4;ieee32", "1+2+3+4;ieee32"),
         ("1-2R", "1R+2R"),
         ("1-4:2-9", "1:2-9+2:2-9+3:2-9+4:2-9"),
     ],
@@ -125,15 +126,15 @@ def test_bit_spec_to_mask_and_rshift_exception(a, b):
 
 
 @given(st.integers(min_value=1, max_value=64))
-def test_size_to_uint(size):
-    dtype = np.dtype(_size_to_uint(size))
+def testsize_to_uint(size):
+    dtype = np.dtype(size_to_uint(size))
     assert size / (dtype.itemsize * 8) <= 1.0
 
 
 @given(st.integers(min_value=65, max_value=128))
-def test_size_to_uint_too_big(size):
+def testsize_to_uint_too_big(size):
     with pytest.raises(ValueError):
-        _size_to_uint(size)
+        size_to_uint(size)
 
 
 @pytest.mark.parametrize(

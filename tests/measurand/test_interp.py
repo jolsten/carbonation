@@ -1,9 +1,6 @@
 import numpy as np
 import pyarrow as pa
 import pytest
-from hypothesis import assume, given
-from hypothesis import strategies as st
-
 from carbonation.measurand.interp import (
     IEEE16,
     IEEE32,
@@ -18,7 +15,9 @@ from carbonation.measurand.interp import (
     TwosComplement,
     Unsigned,
 )
-from carbonation.measurand.utils import _size_to_uint
+from carbonation.measurand.utils import size_to_uint
+from hypothesis import assume, given
+from hypothesis import strategies as st
 
 from . import strategies as cst
 from .conftest import ARRAY_SIZE
@@ -27,7 +26,7 @@ from .conftest import ARRAY_SIZE
 @given(cst.uint_and_size())
 def test_unsigned(things):
     uint, size = things
-    dtype = _size_to_uint(size)
+    dtype = size_to_uint(size)
     data = np.array([uint] * 10, dtype=dtype)
     result = Unsigned().apply_ndarray(data, size)
     assert list(result) == [uint] * 10
@@ -36,7 +35,7 @@ def test_unsigned(things):
 @given(cst.uint_and_size())
 def test_onescomp(things):
     uint, size = things
-    dtype = _size_to_uint(size)
+    dtype = size_to_uint(size)
     data = np.array([uint] * 10, dtype=dtype)
     result = OnesComplement().apply_ndarray(data, size)
     assert result.shape[0] == 10
@@ -45,7 +44,7 @@ def test_onescomp(things):
 @given(cst.uint_and_size())
 def test_twoscomp(things):
     uint, size = things
-    dtype = _size_to_uint(size)
+    dtype = size_to_uint(size)
     data = np.array([uint] * 10, dtype=dtype)
     result = TwosComplement().apply_ndarray(data, size)
     assert result.shape[0] == 10
