@@ -51,7 +51,7 @@ source = "vcs"
 src-layout = true
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/carbonation/_version.py"
+version-file = "src/carbonation/__about__.py"
 
 [tool.hatch.envs.default]
 dependencies = [
