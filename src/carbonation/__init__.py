@@ -1,1 +1,1 @@
-from carbonation._version import __version__
+from carbonation.__about__ import __version__
